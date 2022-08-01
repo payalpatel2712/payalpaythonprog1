@@ -1,0 +1,150 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<!--=========== END HEADER SECTION ================-->            
+<section id="blogArchive">      
+  <div class="row">
+    <div class="col-lg-12 col-md-12">
+      <div class="blog-breadcrumbs-area">
+        <div class="container">
+          <div class="blog-breadcrumbs-left">
+            <h2>book appointment  </h2>
+          </div>
+          <div class="blog-breadcrumbs-right">
+            <ol class="breadcrumb">
+              <li>You are here</li>
+              <li><a href="#">Home</a></li>                  
+              <li class="active"><a href=""></a>book appointment</li>
+
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>        
+  </div>      
+</section> 
+
+<section id="contact">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-7 col-md-7 col-sm-6">
+        <div class="contact-form">
+          <div class="section-heading">
+            <h2> book appointment</h2> 
+  
+            <div class="line"></div>
+          </div>
+              {% if msg %}
+              <b style="color: darkblue;">{{msg}}</b>
+              {% endif %}  
+            </p>  
+            <p><h3>Doctor Information</h3></p>
+              <form class="submitphoto_form" method="POST" action="{% url 'bookappointment' pk=doctor.pk %}">
+                {% csrf_token %}
+                <input type="text" class="wp-form-control wpcf7-text" value="{{doctor.doctor.fname}}" readonly>
+                <input type="text" class="wp-form-control wpcf7-text" value="{{doctor.doctor.lname}}" readonly>
+                <input type="text" class="wp-form-control wpcf7-email" value="{{doctor.doctor_speciality}}" readonly>
+                <p><h3>Patient Information</h3></p>
+                <input type="text" class="wp-form-control wpcf7-text" value="{{Patient.fname}}">
+                <input type="text" class="wp-form-control wpcf7-text" value="{{Patient.lname}}">
+
+                <input type="date" class="wp-form-control wpcf7-text" name="date" id="date">
+                <span id="date_error"></span>
+                
+
+                <select name="time" class="wp-form-control wpcf7-text" id="time">
+                  <span id="time_error" ></span>
+                  <option>---Select Time---</option>
+                  <option value="9:00 to 10:00">9:00 to 10:00</option>
+                  <option value="10:00 to 11:00">10:00 to 11:00</option>
+                  <option value="11:00 to 12:00">11:00 to 12:00</option>
+                  <option value="11:00 to 12:00">12:00 to 01:00</option>
+                  <option value="11:00 to 12:00">01:00 to 02:00</option>
+                  <option value="11:00 to 12:00">02:00 to 03:00</option>
+                  <option value="11:00 to 12:00">03:00 to 04:00</option>
+                  <option value="11:00 to 12:00">04:00 to 05:00</option>
+                  
+                </select>
+                <textarea class="wp-form-control wpcf7-textarea" cols="30" rows="10" placeholder="Health Issue" name="health_issue"></textarea>
+                
+               <button class="wpcf7-submit button--itzel" type="submit"><i class="button__icon fa fa-envelope"></i><span>Confirm Appointment</span></button>                
+              </form>
+
+            </div>
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-6">
+          <div class="contact-address">
+            <div class="section-heading">
+              <h2>Contact Information</h2>
+              <div class="line"></div>
+            </div>
+            <p>The point of using Lorem Ipsum is that it has a more-or-less normal distribution ofletters.
+            </p>
+            <address class="contact-info">               
+              <p><span class="fa fa-home"></span>B-19,devcity banglows,ahamdabad</p>
+              <p><span class="fa fa-phone"></span>9638843281</p>
+              <p><span class="fa fa-envelope"></span>payalpatelkp@gmail.com</p>
+            </address>
+            <h1>Recent Contacts</h1>
+            <hr>
+            {% for iSS in contacts %}
+            Name : {{i.fname}}<br>
+            Subject : {{i.subject}}<br>
+            <hr>
+            {% endfor %}
+          </div>
+        </div>
+      </div> 
+    </div>
+  </section>
+  <script>
+    $("#date").change(function(){
+            var date=$(this).val();
+            
+            $.ajax({
+              url: '/ajax/validate_date/',
+              data: {
+                'date': date
+              },
+              dataType: 'json',
+              success: function (data) {
+                if (data.is_taken) {
+                  document.getElementById("date").style.border="5px solid red";
+                  document.getElementById("date_error").innerHTML="This date slote is Already booked by you";
+                }else{
+                  document.getElementById("date").style.border="5px solid green";
+                  document.getElementById("date_error").innerHTML="";
+                }
+              } 
+            });
+          });
+  </script>
+<script>
+  $("#time").change(function(){
+            var time=$(this).val();
+            
+            $.ajax({
+              url: '/ajax/validate_time/',
+              data: {
+                'time': time
+              },
+              dataType: 'json',
+              success: function (data) {
+                if (data.is_taken) {
+                  document.getElementById("time").style.border="5px solid red";
+                  document.getElementById("time_error").innerHTML="This Email ID Already Registered";
+                }else{
+                  document.getElementById("time").style.border="5px solid green";
+                  document.getElementById("time_error").innerHTML="";
+                }
+              }
+            });
+          });
+</script>
+       
+</body>
+</html>
+{% endblock%}
